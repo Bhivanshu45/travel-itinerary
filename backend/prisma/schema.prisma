@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Trip {
+  id          Int         @id @default(autoincrement())
+  name        String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  phoneNumber String
+  isPublic    Boolean     @default(true)
+  shareId     String      @unique @default(uuid())
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  cityStops   CityStop[]
+}
+
+model CityStop {
+  id         Int        @id @default(autoincrement())
+  city       String
+  arrival    DateTime?
+  departure  DateTime?
+  transport  String?
+
+  tripId     Int
+  trip       Trip       @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  activities Activity[]
+}
+
+model Activity {
+  id          Int        @id @default(autoincrement())
+  name        String
+  startTime   DateTime
+  endTime     DateTime
+  location    String?
+  notes       String?
+
+  cityStopId  Int
+  cityStop    CityStop   @relation(fields: [cityStopId], references: [id], onDelete: Cascade)
+}
