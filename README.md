@@ -137,4 +137,6 @@ MIT
 
 **Made with ❤️ for travel planning!**
 
+_Triggering GitHub folder refresh after submodule cleanup._
+
 ---
