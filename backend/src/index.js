@@ -1,4 +1,3 @@
-// src/server.js
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -16,11 +15,11 @@ app.use("/api/trips", tripRoutes);
 
 // Root route
 app.get("/", (req, res) => {
-  res.send("🌍 Travel Itinerary API running...");
+  res.send("Travel Itinerary API running...");
 });
 
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(` Server running on port ${PORT}`);
 });

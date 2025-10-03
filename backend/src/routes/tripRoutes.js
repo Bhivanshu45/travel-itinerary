@@ -8,12 +8,14 @@ import {
   getTripByShareId,
 } from "../controllers/tripController.js";
 
+import { updateTrip,deleteTrip } from "../controllers/modifyTripController.js";
+
 const router = express.Router();
 
 // Create trip
 router.post("/", createTrip);
 
-// Get all trips (legacy, not used for public/private separation)
+// Get all trips
 router.get("/", getTrips);
 
 // Get all public trips
@@ -28,4 +30,7 @@ router.get("/share/:shareId", getTripByShareId);
 // Get trip by id
 router.get("/:id", getTripById);
 
+router.put("/:id", updateTrip);
+
+router.delete("/:id", deleteTrip);
 export default router;

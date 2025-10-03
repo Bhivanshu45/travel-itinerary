@@ -1,11 +1,11 @@
 import prisma from "../config/db.js";
 
-// Create a new trip with city stops and activities
+// -------------------- Trip Creation --------------------
 export const createTrip = async (req, res) => {
   try {
     const { name, startDate, endDate, cityStops, phoneNumber, isPublic } =
       req.body;
-
+    // Validation
     if (!name || !startDate || !endDate || !cityStops?.length || !phoneNumber) {
       return res
         .status(400)
@@ -18,7 +18,7 @@ export const createTrip = async (req, res) => {
         .status(400)
         .json({ error: "Start date must be before end date." });
     }
-
+    // Create trip
     const trip = await prisma.trip.create({
       data: {
         name,
@@ -49,11 +49,45 @@ export const createTrip = async (req, res) => {
         cityStops: { include: { activities: true } },
       },
     });
-
     res.status(201).json(trip);
   } catch (error) {
     console.error("Error creating trip:", error);
     res.status(500).json({ error: "Failed to create trip." });
+  }
+};
+
+// -------------------- Trip Retrieval --------------------
+export const getTrips = async (req, res) => {
+  try {
+    const trips = await prisma.trip.findMany({
+      include: { cityStops: { include: { activities: true } } },
+      orderBy: { createdAt: "desc" },
+    });
+    res.json(trips);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch trips." });
+  }
+};
+
+// Get a single trip by ID
+export const getTripById = async (req, res) => {
+  try {
+    const tripId = parseInt(req.params.id);
+    if (isNaN(tripId)) {
+      return res.status(400).json({ error: "Invalid trip ID." });
+    }
+    const trip = await prisma.trip.findUnique({
+      where: { id: tripId },
+      include: { cityStops: { include: { activities: true } } },
+    });
+    if (!trip) {
+      return res.status(404).json({ error: "Trip not found." });
+    }
+    res.json(trip);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch trip." });
   }
 };
 
@@ -90,7 +124,7 @@ export const getTripsByPhone = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch user's trips." });
   }
 };
-// Get all trips
+
 // Get trip by shareId (for sharable link)
 export const getTripByShareId = async (req, res) => {
   try {
@@ -112,43 +146,4 @@ export const getTripByShareId = async (req, res) => {
   }
 };
 
-export const getTrips = async (req, res) => {
-  try {
-    const trips = await prisma.trip.findMany({
-      include: {
-        cityStops: { include: { activities: true } },
-      },
-      orderBy: { createdAt: "desc" },
-    });
-    res.json(trips);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to fetch trips." });
-  }
-};
 
-// Get a single trip by ID
-export const getTripById = async (req, res) => {
-  try {
-    const tripId = parseInt(req.params.id);
-    if (isNaN(tripId)) {
-      return res.status(400).json({ error: "Invalid trip ID." });
-    }
-
-    const trip = await prisma.trip.findUnique({
-      where: { id: tripId },
-      include: {
-        cityStops: { include: { activities: true } },
-      },
-    });
-
-    if (!trip) {
-      return res.status(404).json({ error: "Trip not found." });
-    }
-
-    res.json(trip);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to fetch trip." });
-  }
-};
