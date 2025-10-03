@@ -44,9 +44,11 @@ export default function TripCard({
       {loadingImg ? (
         <div className="w-full h-40 bg-gray-100 rounded-lg animate-pulse mb-2" />
       ) : (
-        <img
+        <Image
           src={imageUrl || "/globe.svg"}
           alt={destination}
+          width={400}
+          height={160}
           className="w-full h-40 object-cover rounded-lg mb-2 border"
         />
       )}
