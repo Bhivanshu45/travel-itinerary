@@ -1,36 +1,113 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Travel Itinerary App
 
-## Getting Started
+A full-stack web application for planning, sharing, and viewing travel itineraries. Built with Node.js, Express, Prisma, PostgreSQL, and Next.js.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+### Core Features
+
+- **Trip Creation:** Create a trip with name, destination city, start/end dates, and a list of activities (with optional time).
+- **Itinerary View:** See your trip in a day-by-day format, grouped by city stops and activities.
+- **Persistence:** All trips are stored in a database (PostgreSQL). Supports create, list, and view operations.
+- **Frontend:** Modern UI built with Next.js. Pages for home (public trips), create trip, view itinerary, and user-specific trips.
+- **Privacy:** Trips can be public or private. Only public trips are shown on the home page.
+- **Shareable Links:** Generate a unique link for each trip to share with friends (view-only).
+
+### Bonus Features
+
+- **Destination Images:** Each trip displays a destination image fetched from Unsplash.
+
+## Tech Stack
+
+- **Backend:** Node.js, Express, Prisma ORM, PostgreSQL(NeonDB)
+- **Frontend:** Next.js (React)
+- **Images:** Unsplash API
+
+## Setup Instructions
+
+### Prerequisites
+
+- Node.js (v18+ recommended)
+- PostgreSQL (or SQLite for local testing)
+
+### 1. Clone the Repository
+
+```
+git clone https://github.com/your-username/travel-itinerary.git
+cd travel-itinerary
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Install Dependencies
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```
+cd backend
+npm install
+cd ../travel-frontend
+npm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 3. Configure Environment Variables
 
-## Learn More
+#### Backend (`backend/.env`)
 
-To learn more about Next.js, take a look at the following resources:
+```
+DATABASE_URL=postgresql://user:password@localhost:5432/yourdb
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+#### Frontend (`travel-frontend/.env.local`)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+NEXT_PUBLIC_UNSPLASH_ACCESS_KEY=your_unsplash_key
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+```
 
-## Deploy on Vercel
+### 4. Set Up the Database
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+cd backend
+npx prisma migrate dev --name init
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 5. Start the Backend Server
+
+```
+cd backend
+npm start
+```
+
+### 6. Start the Frontend
+
+```
+cd travel-frontend
+npm run dev
+```
+
+### 7. Access the App
+
+- Frontend: [http://localhost:3000](http://localhost:3000)
+- Backend API: [http://localhost:8000](http://localhost:8000)
+
+## Usage
+
+- **Home Page:** View all public trips.
+- **Create Trip:** Add a new trip with city stops and activities.
+- **My Trips:** Enter your phone number to view your trips.
+- **Itinerary View:** See trip details, grouped by day and city.
+- **Shareable Link:** Copy and share the trip link for view-only access.
+
+## Deployment
+
+- Frontend: Deployed to Vercel.
+- Backend: Deployed to Render.
+
+## Demo
+
+- Loom video demo: <demo_link>
+
+## License
+
+MIT
+
+---
+
+**Made with ❤️ for travel planning!**
