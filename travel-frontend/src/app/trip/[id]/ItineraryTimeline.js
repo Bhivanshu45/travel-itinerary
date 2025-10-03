@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { getWeatherForCityDate } from "../../utils/weather";
 
 function groupActivitiesByDay(cityStops) {
@@ -24,6 +25,7 @@ export default function ItineraryTimeline({ cityStops }) {
   const [weatherError, setWeatherError] = useState({});
 
   useEffect(() => {
+    const dayKeysString = dayKeys.join(",");
     dayKeys.forEach((day) => {
       // Get the first city for the day
       const firstActivity = days[day][0];
@@ -44,7 +46,8 @@ export default function ItineraryTimeline({ cityStops }) {
           });
       }
     });
-  }, [dayKeys.join(","), cityStops]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dayKeysString, cityStops]);
 
   function handleExpand(day) {
     setExpandedDays((prev) =>

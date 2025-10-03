@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { getCityImageUrl } from "../../../utils/unsplash";
 import { useParams } from "next/navigation";
 import Navbar from "../../../components/common/Navbar";
@@ -44,9 +45,11 @@ export default function TripSharePage() {
             {loadingImg ? (
               <div className="w-full h-56 bg-gray-100 rounded-xl animate-pulse mb-4" />
             ) : (
-              <img
+              <Image
                 src={imageUrl || "/globe.svg"}
                 alt={trip.cityStops?.[0]?.city || "Destination"}
+                width={800}
+                height={224}
                 className="w-full h-56 object-cover rounded-xl mb-4 border"
               />
             )}
