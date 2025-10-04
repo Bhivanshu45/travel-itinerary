@@ -95,10 +95,12 @@ export default function ItineraryTimeline({ cityStops }) {
                 </span>
               ) : weatherData[day] ? (
                 <span className="flex items-center gap-1 text-xs text-blue-700">
-                  <img
+                  <Image
                     src={weatherData[day].icon}
                     alt="weather"
-                    className="w-6 h-6 inline-block"
+                    width={24}
+                    height={24}
+                    className="inline-block"
                   />
                   {Math.round(weatherData[day].temp)}°C,{" "}
                   {weatherData[day].description}

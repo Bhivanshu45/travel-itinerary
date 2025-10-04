@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { getCityImageUrl } from "../../utils/unsplash";
 
 export default function TripCard({
@@ -72,12 +73,12 @@ export default function TripCard({
         {new Date(trip.endDate).toLocaleDateString()}
       </p>
       <div className="flex gap-3 mt-2">
-        <a
+        <Link
           href={`/trip/share/${trip.shareId}`}
           className="inline-block text-blue-600 hover:text-blue-800 font-medium"
         >
           View Itinerary →
-        </a>
+        </Link>
         <button
           type="button"
           onClick={copyShareLink}
