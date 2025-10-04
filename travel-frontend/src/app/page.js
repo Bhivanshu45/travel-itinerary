@@ -8,12 +8,45 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/trips/public`)
-      .then((res) => res.json())
+    const apiUrl =
+      process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
+
+    // Create timeout controller
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+    fetch(`${apiUrl}/api/trips/public`, {
+      signal: controller.signal,
+      headers: {
+        Accept: "application/json",
+        "Cache-Control": "no-cache",
+      },
+    })
+      .then((res) => {
+        clearTimeout(timeoutId);
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.json();
+      })
       .then((data) => {
-        setTrips(data);
+        setTrips(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
+      .catch((error) => {
+        clearTimeout(timeoutId);
+        if (error.name === "AbortError") {
+          console.error("API request timed out");
+        } else {
+          console.error("Error fetching trips:", error);
+        }
+        setTrips([]);
         setLoading(false);
       });
+
+    // Cleanup function
+    return () => {
+      clearTimeout(timeoutId);
+      controller.abort();
+    };
   }, []);
 
   return (

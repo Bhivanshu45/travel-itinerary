@@ -6,22 +6,57 @@ const API_KEY = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY;
 export async function getWeatherForCityDate(city, date) {
   // date: 'YYYY-MM-DD'
   try {
+    // Check if API key is available
+    if (!API_KEY) {
+      console.warn("OpenWeather API key not configured");
+      return null;
+    }
+
     // Get city coordinates first
     const geoRes = await fetch(
       `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(
         city
-      )}&limit=1&appid=${API_KEY}`
+      )}&limit=1&appid=${API_KEY}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
     );
+
+    if (!geoRes.ok) {
+      console.error("Geocoding API request failed:", geoRes.status);
+      return null;
+    }
+
     const geoData = await geoRes.json();
-    if (!geoData[0]) return null;
+    if (!geoData || !Array.isArray(geoData) || !geoData[0]) return null;
     const { lat, lon } = geoData[0];
 
     // Get forecast data
     const forecastRes = await fetch(
-      `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`
+      `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+        },
+      }
     );
+
+    if (!forecastRes.ok) {
+      console.error("Weather API request failed:", forecastRes.status);
+      return null;
+    }
+
     const forecastData = await forecastRes.json();
-    if (!forecastData.list) return null;
+    if (
+      !forecastData ||
+      !forecastData.list ||
+      !Array.isArray(forecastData.list)
+    )
+      return null;
 
     // Find the forecast closest to the requested date (by day)
     const targetDay = new Date(date).toISOString().slice(0, 10);

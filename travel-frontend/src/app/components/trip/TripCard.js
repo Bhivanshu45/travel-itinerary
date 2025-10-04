@@ -20,17 +20,41 @@ export default function TripCard({
       : `/trip/share/${trip.shareId}`;
 
   useEffect(() => {
-    if (!destination) return;
+    if (!destination) {
+      setLoadingImg(false);
+      return;
+    }
+
     let cancelled = false;
     setLoadingImg(true);
-    getCityImageUrl(destination).then((url) => {
+
+    // Set timeout to prevent infinite loading
+    const timeout = setTimeout(() => {
       if (!cancelled) {
-        setImageUrl(url);
+        setImageUrl(null);
         setLoadingImg(false);
       }
-    });
+    }, 10000);
+
+    getCityImageUrl(destination)
+      .then((url) => {
+        if (!cancelled) {
+          clearTimeout(timeout);
+          setImageUrl(url);
+          setLoadingImg(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          clearTimeout(timeout);
+          setImageUrl(null);
+          setLoadingImg(false);
+        }
+      });
+
     return () => {
       cancelled = true;
+      clearTimeout(timeout);
     };
   }, [destination]);
 
