@@ -25,12 +25,20 @@ export default function ItineraryTimeline({ cityStops }) {
   const [weatherError, setWeatherError] = useState({});
 
   useEffect(() => {
+    if (!cityStops || cityStops.length === 0) return;
+
     dayKeys.forEach((day) => {
       // Get the first city for the day
       const firstActivity = days[day][0];
-      const city = firstActivity.city;
-      // Only fetch if not already fetched
-      if (!weatherData[day] && city) {
+      const city = firstActivity?.city;
+
+      // Only fetch if not already fetched, not loading, and city exists
+      if (
+        city &&
+        !weatherData[day] &&
+        !weatherLoading[day] &&
+        !weatherError[day]
+      ) {
         setWeatherLoading((prev) => ({ ...prev, [day]: true }));
         getWeatherForCityDate(city, new Date(day).toISOString().slice(0, 10))
           .then((data) => {
@@ -45,7 +53,7 @@ export default function ItineraryTimeline({ cityStops }) {
           });
       }
     });
-  }, [dayKeys, days, weatherData]);
+  }, [cityStops]);
 
   function handleExpand(day) {
     setExpandedDays((prev) =>
