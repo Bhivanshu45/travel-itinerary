@@ -25,7 +25,6 @@ export default function ItineraryTimeline({ cityStops }) {
   const [weatherError, setWeatherError] = useState({});
 
   useEffect(() => {
-    const dayKeysString = dayKeys.join(",");
     dayKeys.forEach((day) => {
       // Get the first city for the day
       const firstActivity = days[day][0];
@@ -46,8 +45,7 @@ export default function ItineraryTimeline({ cityStops }) {
           });
       }
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dayKeysString, cityStops]);
+  }, [dayKeys, days, weatherData]);
 
   function handleExpand(day) {
     setExpandedDays((prev) =>
