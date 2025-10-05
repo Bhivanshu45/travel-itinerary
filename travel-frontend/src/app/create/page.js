@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import Navbar from "../../../../travel-frontend/src/app/components/common/Navbar";
+import Navbar from "../components/common/Navbar";
 import TripForm from "./TripForm";
 import { validateTrip } from "../utils/validationUtils";
 

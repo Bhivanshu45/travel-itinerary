@@ -6,9 +6,18 @@ import { getWeatherForCityDate } from "../../utils/weather";
 function groupActivitiesByDay(cityStops) {
   const days = {};
   cityStops.forEach((stop) => {
+    if (!stop.activities) return;
+
     stop.activities.forEach((a) => {
       if (!a.startTime) return;
-      const day = new Date(a.startTime).toLocaleDateString();
+
+      const date = new Date(a.startTime);
+      if (isNaN(date.getTime())) {
+        console.warn("Invalid activity start time:", a.startTime);
+        return;
+      }
+
+      const day = date.toLocaleDateString();
       if (!days[day]) days[day] = [];
       days[day].push({ ...a, city: stop.city });
     });
@@ -39,14 +48,22 @@ export default function ItineraryTimeline({ cityStops }) {
         !weatherLoading[day] &&
         !weatherError[day]
       ) {
+        const parsedDay = new Date(day);
+        if (isNaN(parsedDay.getTime())) {
+          console.warn("Invalid day for weather fetch:", day);
+          return;
+        }
         setWeatherLoading((prev) => ({ ...prev, [day]: true }));
-        getWeatherForCityDate(city, new Date(day).toISOString().slice(0, 10))
+
+        const dateString = parsedDay.toISOString().slice(0, 10);
+        getWeatherForCityDate(city, dateString)
           .then((data) => {
             setWeatherData((prev) => ({ ...prev, [day]: data }));
             setWeatherLoading((prev) => ({ ...prev, [day]: false }));
             setWeatherError((prev) => ({ ...prev, [day]: !data }));
           })
-          .catch(() => {
+          .catch((error) => {
+            console.warn("Weather fetch failed for", city, day, error);
             setWeatherData((prev) => ({ ...prev, [day]: null }));
             setWeatherLoading((prev) => ({ ...prev, [day]: false }));
             setWeatherError((prev) => ({ ...prev, [day]: true }));
@@ -128,7 +145,7 @@ export default function ItineraryTimeline({ cityStops }) {
                     <span className="text-xs text-gray-400">{a.city}</span>
                   </div>
                   <div className="text-sm text-gray-500 mb-1">
-                    {a.startTime && (
+                    {a.startTime && !isNaN(new Date(a.startTime)) && (
                       <span>
                         {new Date(a.startTime).toLocaleTimeString([], {
                           hour: "2-digit",
@@ -136,7 +153,7 @@ export default function ItineraryTimeline({ cityStops }) {
                         })}
                       </span>
                     )}
-                    {a.endTime && (
+                    {a.endTime && !isNaN(new Date(a.endTime)) && (
                       <span>
                         {" "}
                         -{" "}
@@ -146,6 +163,7 @@ export default function ItineraryTimeline({ cityStops }) {
                         })}
                       </span>
                     )}
+
                     {a.location && (
                       <span className="ml-2 text-gray-400">@ {a.location}</span>
                     )}

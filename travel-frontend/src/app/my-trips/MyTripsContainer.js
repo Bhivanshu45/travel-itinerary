@@ -4,6 +4,7 @@ import Navbar from "../../../../travel-frontend/src/app/components/common/Navbar
 import TripList from "./TripList";
 import EditTripModal from "../components/trip/EditTripModal";
 import TripSearchForm from "./TripSearchForm";
+import { safeDateFormat, safeToISOString } from "../utils/validationUtils";
 
 export default function MyTripsContainer() {
   const [phone, setPhone] = useState("");
@@ -56,31 +57,19 @@ export default function MyTripsContainer() {
     setEditForm({
       name: trip.name,
       description: trip.description || "",
-      startDate: trip.startDate
-        ? new Date(trip.startDate).toISOString().slice(0, 10)
-        : "",
-      endDate: trip.endDate
-        ? new Date(trip.endDate).toISOString().slice(0, 10)
-        : "",
+      startDate: safeDateFormat(trip.startDate, "date"),
+      endDate: safeDateFormat(trip.endDate, "date"),
       phoneNumber: phone,
       isPublic: trip.isPublic,
       cityStops: trip.cityStops.map((c) => ({
         city: c.city,
-        arrival: c.arrival
-          ? new Date(c.arrival).toISOString().slice(0, 10)
-          : "",
-        departure: c.departure
-          ? new Date(c.departure).toISOString().slice(0, 10)
-          : "",
+        arrival: safeDateFormat(c.arrival, "date"),
+        departure: safeDateFormat(c.departure, "date"),
         transport: c.transport || "",
         activities: c.activities.map((a) => ({
           name: a.name,
-          startTime: a.startTime
-            ? new Date(a.startTime).toISOString().slice(0, 16)
-            : "",
-          endTime: a.endTime
-            ? new Date(a.endTime).toISOString().slice(0, 16)
-            : "",
+          startTime: safeDateFormat(a.startTime, "datetime"),
+          endTime: safeDateFormat(a.endTime, "datetime"),
           location: a.location || "",
           notes: a.notes || "",
         })),
@@ -142,13 +131,13 @@ export default function MyTripsContainer() {
       ...editForm,
       cityStops: editForm.cityStops.map((c) => ({
         city: c.city,
-        arrival: c.arrival ? new Date(c.arrival).toISOString() : null,
-        departure: c.departure ? new Date(c.departure).toISOString() : null,
+        arrival: safeToISOString(c.arrival),
+        departure: safeToISOString(c.departure),
         transport: c.transport || null,
         activities: c.activities.map((a) => ({
           name: a.name,
-          startTime: a.startTime ? new Date(a.startTime).toISOString() : null,
-          endTime: a.endTime ? new Date(a.endTime).toISOString() : null,
+          startTime: safeToISOString(a.startTime),
+          endTime: safeToISOString(a.endTime),
           location: a.location || null,
           notes: a.notes || null,
         })),
